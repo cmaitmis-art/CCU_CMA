@@ -145,7 +145,7 @@ export default function CMALogin({ onLogin }) {
         </div>
 
         <div className="login-footer">
-          © 2026 Condominium Management Authority · Sri Lanka .
+          © 2026 Condominium Management Authority 
         </div>
       </div>
     </>
