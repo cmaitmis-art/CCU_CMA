@@ -306,9 +306,9 @@ router.post('/', async (req, res) => {
     }
 
 
-    const created_by = req.body.created_by;
-    const modified_by = req.body.modified_by;
-    const user_name = req.body.user_name || created_by || 'Unknown';
+    const created_by = req.body.created_by || req.body.user_name || 'System';
+    const modified_by = req.body.modified_by || created_by;
+    const user_name = req.body.user_name || created_by;
     const initialHistory = [{
       name: user_name,
       action: 'Added',
@@ -347,8 +347,8 @@ router.patch('/:id', async (req, res) => {
     const record = await ManagementCorporation.findByPk(req.params.id);
     if (!record) return res.status(404).json({ error: 'Not found' });
 
-    const modified_by = req.body.modified_by;
-    const user_name = req.body.user_name || modified_by || 'Unknown';
+    const modified_by = req.body.modified_by || req.body.user_name || 'System';
+    const user_name = req.body.user_name || modified_by;
     let history = [];
     try {
       history = record.history ? JSON.parse(record.history) : [];

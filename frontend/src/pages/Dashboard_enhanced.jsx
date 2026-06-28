@@ -125,156 +125,6 @@ function Dashboard({ onNavigate }) {
         </div>
       </div>
 
-      {reminderDiscussions.length > 0 && (
-        <div
-          className="dashboard-reminder-banner"
-          style={{
-            background: 'linear-gradient(135deg, #fffbeb 0%, #fef3c7 100%)',
-            border: '1.5px solid #fde68a',
-            borderRadius: 'var(--radius)',
-            padding: '20px 24px',
-            marginBottom: '22px',
-            boxShadow: '0 10px 25px rgba(217, 119, 6, 0.05)',
-            position: 'relative',
-            overflow: 'hidden',
-            animation: 'fadeIn 0.4s ease-out'
-          }}
-        >
-          {/* Decorative left accent bar */}
-          <div style={{
-            position: 'absolute',
-            left: 0,
-            top: 0,
-            bottom: 0,
-            width: '6px',
-            background: 'linear-gradient(to bottom, #d97706, #b45309)'
-          }}></div>
-
-          <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'space-between', flexWrap: 'wrap', gap: '14px' }}>
-            <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-              <div style={{
-                width: '42px',
-                height: '42px',
-                borderRadius: '10px',
-                background: '#fef3c7',
-                border: '1px solid #fde68a',
-                color: '#d97706',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '18px',
-                boxShadow: '0 4px 10px rgba(217,119,6,0.1)'
-              }}>
-                <i className="fas fa-bell" style={{ fontSize: '18px' }}></i>
-              </div>
-              <div>
-                <h3 style={{ margin: 0, fontSize: '16px', color: '#78350f', fontWeight: '700' }}>
-                  Discussion Reminders
-                </h3>
-                <p style={{ margin: '2px 0 0', fontSize: '13px', color: '#92400e' }}>
-                  You have {reminderDiscussions.length} discussion meeting{reminderDiscussions.length !== 1 ? 's' : ''} scheduled or pending action.
-                </p>
-              </div>
-            </div>
-
-            <button
-              onClick={() => onNavigate?.('discussion')}
-              className="btn"
-              style={{
-                background: 'linear-gradient(135deg, #d97706 0%, #b45309 100%)',
-                color: '#fff',
-                border: 'none',
-                fontWeight: '600',
-                padding: '8px 18px',
-                borderRadius: '8px',
-                boxShadow: '0 4px 12px rgba(217, 119, 6, 0.2)',
-                cursor: 'pointer',
-                transition: 'all 0.2s ease',
-              }}
-              onMouseEnter={(e) => {
-                e.currentTarget.style.transform = 'translateY(-1px)';
-                e.currentTarget.style.boxShadow = '0 6px 16px rgba(217, 119, 6, 0.3)';
-              }}
-              onMouseLeave={(e) => {
-                e.currentTarget.style.transform = 'none';
-                e.currentTarget.style.boxShadow = '0 4px 12px rgba(217, 119, 6, 0.2)';
-              }}
-            >
-              View Discussions <i className="fas fa-arrow-right" style={{ marginLeft: '6px' }}></i>
-            </button>
-          </div>
-
-          <div
-            style={{
-              marginTop: '16px',
-              display: 'grid',
-              gridTemplateColumns: 'repeat(auto-fit, minmax(280px, 1fr))',
-              gap: '12px'
-            }}
-          >
-            {reminderDiscussions.map((d) => (
-              <div
-                key={d.id}
-                style={{
-                  background: 'rgba(255, 255, 255, 0.85)',
-                  border: '1px solid rgba(253, 230, 138, 0.6)',
-                  borderRadius: '10px',
-                  padding: '12px 14px',
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: '6px',
-                  boxShadow: '0 2px 6px rgba(0,0,0,0.02)'
-                }}
-              >
-                <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'flex-start' }}>
-                  <span style={{ fontSize: '11px', fontWeight: '800', color: '#d97706', letterSpacing: '0.5px' }}>
-                    {d.file_no || 'NO FILE NO.'}
-                  </span>
-                  <span style={{
-                    fontSize: '11px',
-                    padding: '2px 8px',
-                    borderRadius: '20px',
-                    background: d.status === 'New' ? '#f5f3ff' : '#fffbeb',
-                    color: d.status === 'New' ? '#7c3aed' : '#d97706',
-                    fontWeight: '600'
-                  }}>
-                    {d.status || 'New'}
-                  </span>
-                </div>
-                <div style={{ fontSize: '13px', fontWeight: '600', color: '#1a1a2e' }}>
-                  {d.appointment || 'Untitled Meeting'}
-                </div>
-                {d.meeting_date_time && (
-                  <div style={{ fontSize: '12px', color: '#5a6478', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <i className="fas fa-clock" style={{ fontSize: '11px' }}></i>
-                    <span>{d.meeting_date_time}</span>
-                  </div>
-                )}
-                {d.venue && (
-                  <div style={{ fontSize: '12px', color: '#5a6478', display: 'flex', alignItems: 'center', gap: '5px' }}>
-                    <i className="fas fa-map-marker-alt" style={{ fontSize: '11px' }}></i>
-                    <span>{d.venue}</span>
-                  </div>
-                )}
-                {d.reminder_notes && (
-                  <div style={{
-                    fontSize: '12px',
-                    color: '#78350f',
-                    background: '#fefaf0',
-                    padding: '6px 8px',
-                    borderRadius: '6px',
-                    marginTop: '4px',
-                    borderLeft: '2px solid #fcd34d'
-                  }}>
-                    {d.reminder_notes}
-                  </div>
-                )}
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
       <div className="stats-grid">
         <div className="stat-card">
           <div className="stat-icon si-blue"><i className="fas fa-building"></i></div>
@@ -315,19 +165,7 @@ function Dashboard({ onNavigate }) {
 
       {/* PENDING TASKS CARDS */}
       <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(300px, 1fr))', gap: '20px', marginBottom: '25px' }}>
-        <div
-          style={{
-            backgroundColor: '#fff',
-            borderRadius: '10px',
-            padding: '20px',
-            border: '1px solid #e2e8f0',
-            borderTop: '4px solid #1a3a6b',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-          }}
-        >
+        <div className="dashboard-pending-card mc-card">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
               <div
@@ -362,7 +200,7 @@ function Dashboard({ onNavigate }) {
             style={{
               width: '100%',
               padding: '10px',
-              borderRadius: '6px',
+              borderRadius: '8px',
               border: 'none',
               backgroundColor: '#f4f6fb',
               color: '#1a3a6b',
@@ -377,19 +215,7 @@ function Dashboard({ onNavigate }) {
           </button>
         </div>
 
-        <div
-          style={{
-            backgroundColor: '#fff',
-            borderRadius: '10px',
-            padding: '20px',
-            border: '1px solid #e2e8f0',
-            borderTop: '4px solid #00796b',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-          }}
-        >
+        <div className="dashboard-pending-card mcom-card">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
               <div
@@ -424,7 +250,7 @@ function Dashboard({ onNavigate }) {
             style={{
               width: '100%',
               padding: '10px',
-              borderRadius: '6px',
+              borderRadius: '8px',
               border: 'none',
               backgroundColor: '#f4f6fb',
               color: '#00796b',
@@ -439,19 +265,7 @@ function Dashboard({ onNavigate }) {
           </button>
         </div>
 
-        <div
-          style={{
-            backgroundColor: '#fff',
-            borderRadius: '10px',
-            padding: '20px',
-            border: '1px solid #e2e8f0',
-            borderTop: '4px solid #f57c00',
-            boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-            display: 'flex',
-            flexDirection: 'column',
-            justifyContent: 'space-between',
-          }}
-        >
+        <div className="dashboard-pending-card cfiles-card">
           <div>
             <div style={{ display: 'flex', alignItems: 'center', gap: '10px', marginBottom: '15px' }}>
               <div
@@ -485,7 +299,7 @@ function Dashboard({ onNavigate }) {
             style={{
               width: '100%',
               padding: '10px',
-              borderRadius: '6px',
+              borderRadius: '8px',
               border: 'none',
               backgroundColor: '#f4f6fb',
               color: '#f57c00',
@@ -501,233 +315,6 @@ function Dashboard({ onNavigate }) {
         </div>
       </div>
 
-      {/* New & Scheduled Discussions Card */}
-      <div
-        className="card"
-        style={{
-          marginBottom: '25px',
-          boxShadow: '0 4px 12px rgba(0,0,0,0.05)',
-          borderTop: '4px solid #1a3a6b',
-        }}
-      >
-        <div
-          className="card-header"
-          style={{
-            display: 'flex',
-            justifyContent: 'space-between',
-            alignItems: 'center',
-            padding: '16px 20px',
-            borderBottom: '1px solid #e2e8f0',
-          }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center', gap: '10px' }}>
-            <div
-              style={{
-                width: '36px',
-                height: '36px',
-                borderRadius: '8px',
-                backgroundColor: '#eef2ff',
-                color: '#1a3a6b',
-                display: 'flex',
-                alignItems: 'center',
-                justifyContent: 'center',
-                fontSize: '16px',
-              }}
-            >
-              <i className="fas fa-comments"></i>
-            </div>
-            <div>
-              <h3 className="card-title" style={{ margin: 0, fontSize: '16px', fontWeight: '700' }}>
-                New & Scheduled Discussions
-              </h3>
-              <span style={{ fontSize: '12px', color: '#64748b', marginLeft: '2px' }}>
-                Latest meetings awaiting action
-              </span>
-            </div>
-          </div>
-          <button
-            onClick={() => {
-              localStorage.setItem('cma_discussion_filter', 'New');
-              onNavigate?.('discussion');
-            }}
-            className="btn btn-link"
-            style={{
-              color: '#1a3a6b',
-              fontWeight: '600',
-              fontSize: '13px',
-              display: 'flex',
-              alignItems: 'center',
-              gap: '6px',
-              cursor: 'pointer',
-              border: 'none',
-              background: 'none',
-              padding: 0,
-            }}
-          >
-            View All Discussions <i className="fas fa-arrow-right" style={{ fontSize: '11px' }}></i>
-          </button>
-        </div>
-        
-        <div className="card-body" style={{ padding: '20px' }}>
-          {newDiscussions.length === 0 ? (
-            <div style={{ textAlign: 'center', padding: '30px 20px', color: '#64748b' }}>
-              <div style={{ fontSize: '32px', marginBottom: '10px', color: '#cbd5e1' }}>
-                <i className="fas fa-comment-slash"></i>
-              </div>
-              <p style={{ margin: 0, fontSize: '14px' }}>No new discussions scheduled.</p>
-              <p style={{ margin: '4px 0 0', fontSize: '12px', color: '#94a3b8' }}>
-                All discussions have been set to In Progress, Completed, or Cancelled.
-              </p>
-            </div>
-          ) : (
-            <div style={{ display: 'flex', flexDirection: 'column', gap: '12px' }}>
-              {newDiscussions.map((d) => (
-                <div
-                  key={d.id}
-                  style={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
-                    padding: '14px 18px',
-                    borderRadius: '10px',
-                    border: '1px solid #e2e8f0',
-                    backgroundColor: '#fff',
-                    transition: 'all 0.2s ease',
-                    boxShadow: '0 1px 3px rgba(0,0,0,0.01)',
-                  }}
-                  onMouseEnter={(e) => {
-                    e.currentTarget.style.borderColor = '#cbd5e1';
-                    e.currentTarget.style.transform = 'translateY(-1px)';
-                    e.currentTarget.style.boxShadow = '0 4px 6px rgba(0,0,0,0.04)';
-                  }}
-                  onMouseLeave={(e) => {
-                    e.currentTarget.style.borderColor = '#e2e8f0';
-                    e.currentTarget.style.transform = 'none';
-                    e.currentTarget.style.boxShadow = '0 1px 3px rgba(0,0,0,0.01)';
-                  }}
-                >
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '16px', flex: 1, minWidth: 0 }}>
-                    {/* Left: Indicator Badge */}
-                    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'flex-start', gap: '4px', width: '120px', flexShrink: 0 }}>
-                      <span
-                        style={{
-                          fontSize: '11px',
-                          fontWeight: '800',
-                          color: '#1a3a6b',
-                          letterSpacing: '0.5px',
-                          background: '#f0f4fa',
-                          padding: '3px 8px',
-                          borderRadius: '6px',
-                          display: 'inline-block',
-                          maxWidth: '110px',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap'
-                        }}
-                        title={d.file_no}
-                      >
-                        {d.file_no || 'NO FILE'}
-                      </span>
-                      <span
-                        style={{
-                          fontSize: '10px',
-                          color: '#94a3b8',
-                        }}
-                      >
-                        {d.date ? new Date(d.date).toLocaleDateString() : '—'}
-                      </span>
-                    </div>
-
-                    {/* Middle: Appointment Content */}
-                    <div style={{ flex: 1, minWidth: 0, paddingRight: '16px' }}>
-                      <div
-                        style={{
-                          fontSize: '14px',
-                          fontWeight: '600',
-                          color: '#1e293b',
-                          overflow: 'hidden',
-                          textOverflow: 'ellipsis',
-                          whiteSpace: 'nowrap',
-                        }}
-                        title={d.appointment}
-                      >
-                        {d.appointment || 'Untitled Meeting'}
-                      </div>
-                      <div style={{ display: 'flex', gap: '16px', marginTop: '4px', flexWrap: 'wrap' }}>
-                        {d.meeting_date_time && (
-                          <span style={{ fontSize: '12px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <i className="fas fa-clock" style={{ fontSize: '11px', color: '#94a3b8' }}></i>
-                            {d.meeting_date_time}
-                          </span>
-                        )}
-                        {d.venue && (
-                          <span style={{ fontSize: '12px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '4px', maxWidth: '200px', overflow: 'hidden', textOverflow: 'ellipsis', whiteSpace: 'nowrap' }} title={d.venue}>
-                            <i className="fas fa-map-marker-alt" style={{ fontSize: '11px', color: '#94a3b8' }}></i>
-                            {d.venue}
-                          </span>
-                        )}
-                        {d.officer && (
-                          <span style={{ fontSize: '12px', color: '#64748b', display: 'flex', alignItems: 'center', gap: '4px' }}>
-                            <i className="fas fa-user-tie" style={{ fontSize: '11px', color: '#94a3b8' }}></i>
-                            {d.officer}
-                          </span>
-                        )}
-                      </div>
-                    </div>
-                  </div>
-
-                  {/* Right: Actions */}
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '12px' }}>
-                    <span
-                      style={{
-                        fontSize: '11px',
-                        padding: '4px 10px',
-                        borderRadius: '20px',
-                        background: '#eff6ff',
-                        color: '#2563eb',
-                        fontWeight: '700',
-                        border: '1px solid #dbeafe',
-                      }}
-                    >
-                      {d.status}
-                    </span>
-                    <button
-                      onClick={() => {
-                        localStorage.setItem('cma_discussion_filter', 'New');
-                        onNavigate?.('discussion');
-                      }}
-                      style={{
-                        padding: '6px 12px',
-                        borderRadius: '6px',
-                        border: '1px solid #cbd5e1',
-                        backgroundColor: '#fff',
-                        color: '#1a3a6b',
-                        fontSize: '12px',
-                        fontWeight: '600',
-                        cursor: 'pointer',
-                        transition: 'all 0.2s',
-                        display: 'flex',
-                        alignItems: 'center',
-                        gap: '4px',
-                      }}
-                      onMouseEnter={(e) => {
-                        e.currentTarget.style.backgroundColor = '#f8fafc';
-                        e.currentTarget.style.borderColor = '#94a3b8';
-                      }}
-                      onMouseLeave={(e) => {
-                        e.currentTarget.style.backgroundColor = '#fff';
-                        e.currentTarget.style.borderColor = '#cbd5e1';
-                      }}
-                    >
-                      Manage <i className="fas fa-chevron-right" style={{ fontSize: '9px' }}></i>
-                    </button>
-                  </div>
-                </div>
-              ))}
-            </div>
-          )}
-        </div>
-      </div>
 
       <div className="two-col">
         <div className="card">

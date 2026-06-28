@@ -73,7 +73,11 @@ const initialFormState = () => ({
   written_assurance_fulfilled: false,
 });
 
-export default function RegistrationForm() {
+export default function RegistrationForm({ currentUser }) {
+  const auditUserLabel = currentUser?.name && currentUser?.username
+    ? `${currentUser.name} (${currentUser.username})`
+    : currentUser?.name || currentUser?.username || 'Unknown';
+
   const [formData, setFormData] = useState(initialFormState());
   const [toast, setToast] = useState(null);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -160,6 +164,9 @@ export default function RegistrationForm() {
         council_members: JSON.stringify(formData.council_members.filter(m => m.name.trim() !== '')),
         // New registrations always start as Pending until verified by CCU
         status: 'Pending',
+        created_by: auditUserLabel,
+        modified_by: auditUserLabel,
+        user_name: auditUserLabel,
       };
 
       await createMC(payload);

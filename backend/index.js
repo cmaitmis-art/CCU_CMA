@@ -9,6 +9,22 @@
  * 5. Waits for the database to be ready before starting the server
  */
 
+// Shim Sequelize.Op for Sequelize v3 compatibility
+const sequelizeModule = require('sequelize');
+sequelizeModule.Op = sequelizeModule.Op || {
+  like: '$like',
+  or: '$or',
+  and: '$and',
+  lte: '$lte',
+  gte: '$gte',
+  ne: '$ne',
+  in: '$in',
+  eq: '$eq',
+};
+if (sequelizeModule.Model && !sequelizeModule.Model.prototype.findByPk) {
+  sequelizeModule.Model.prototype.findByPk = sequelizeModule.Model.prototype.findById;
+}
+
 const express = require('express');
 const cors = require('cors');
 const { Op } = require('sequelize'); // Imported for Sequelize operators

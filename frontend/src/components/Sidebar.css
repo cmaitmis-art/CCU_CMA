@@ -12,14 +12,14 @@
 }
 
 .sidebar-logo {
-  padding: 16px;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.12);
+  padding: 22px 18px;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
 }
 
 .logo-area {
   display: flex;
   align-items: center;
-  gap: 10px;
+  gap: 12px;
 }
 
 .cma-emblem {
@@ -37,6 +37,7 @@
   font-size: 14px;
   font-weight: 600;
   color: var(--navy);
+  box-shadow: 0 4px 10px rgba(0, 0, 0, 0.15);
 }
 
 .logo-image {
@@ -45,12 +46,18 @@
   object-fit: cover;
 }
 
+.logo-text {
+  min-width: 0;
+}
+
 .logo-text .brand {
-  font-family: 'Playfair Display', serif;
-  font-size: 11px;
+  font-family: 'DM Sans', sans-serif;
+  font-size: 11.5px;
+  font-weight: 700;
   color: #fff;
   letter-spacing: 0.3px;
-  line-height: 1.2;
+  line-height: 1.3;
+  word-wrap: break-word;
 }
 
 .logo-text .sub {
@@ -58,99 +65,178 @@
   color: var(--gold2);
   letter-spacing: 1px;
   text-transform: uppercase;
-  margin-top: 1px;
+  margin-top: 2px;
   line-height: 1.3;
+  font-weight: 600;
 }
 
 .sidebar-nav {
   flex: 1;
-  padding: 12px 0;
+  padding: 16px 0;
   overflow-y: auto;
 }
 
+.sidebar-nav::-webkit-scrollbar {
+  width: 5px;
+}
+
+.sidebar-nav::-webkit-scrollbar-track {
+  background: transparent;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.15);
+  border-radius: 99px;
+}
+
+.sidebar-nav::-webkit-scrollbar-thumb:hover {
+  background: rgba(255, 255, 255, 0.3);
+}
+
 .nav-section {
-  padding: 6px 14px 3px;
-  font-size: 9px;
-  color: rgba(255, 255, 255, 0.35);
-  letter-spacing: 1.2px;
+  padding: 16px 26px 6px;
+  font-size: 9.5px;
+  color: rgba(255, 255, 255, 0.3);
+  letter-spacing: 1.5px;
   text-transform: uppercase;
-  font-weight: 500;
+  font-weight: 700;
 }
 
 .nav-item {
   display: flex;
   align-items: center;
-  gap: 8px;
-  padding: 7px 12px;
+  margin: 4px 14px;
+  padding: 8px 12px;
   cursor: pointer;
-  color: rgba(255, 255, 255, 0.7);
-  font-size: 12px;
-  transition: 0.2s;
-  border-left: 3px solid transparent;
-  font-weight: 400;
+  color: rgba(255, 255, 255, 0.65);
+  font-size: 13px;
+  transition: all 0.2s cubic-bezier(0.4, 0, 0.2, 1);
+  font-weight: 500;
   user-select: none;
+  border-radius: 12px;
 }
 
 .nav-item:hover {
-  background: rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+}
+
+.nav-item:hover .nav-icon-wrap {
+  background: rgba(255, 255, 255, 0.1);
   color: #fff;
 }
 
 .nav-item.active {
-  background: rgba(201, 168, 76, 0.15);
-  color: var(--gold2);
-  border-left-color: var(--gold);
+  background: linear-gradient(135deg, var(--gold2) 0%, var(--gold) 100%);
+  color: var(--navy);
+  font-weight: 700;
+  box-shadow: 0 4px 15px rgba(201, 168, 76, 0.25);
 }
 
-.nav-item i {
-  width: 18px;
-  font-size: 14px;
+.nav-item.active .nav-icon-wrap {
+  background: rgba(26, 58, 107, 0.09);
+  color: var(--navy);
+}
+
+.nav-icon-wrap {
+  width: 32px;
+  height: 32px;
+  border-radius: 9px;
+  background: rgba(255, 255, 255, 0.05);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-right: 12px;
   flex-shrink: 0;
+  transition: all 0.2s ease;
+  color: rgba(255, 255, 255, 0.65);
+}
+
+.nav-icon-wrap i {
+  font-size: 14px;
+}
+
+.nav-label {
+  letter-spacing: 0.1px;
 }
 
 .sidebar-bottom {
-  padding: 12px;
-  border-top: 1px solid rgba(255, 255, 255, 0.1);
+  padding: 16px;
+  border-top: 1px solid rgba(255, 255, 255, 0.08);
+  background: rgba(0, 0, 0, 0.1);
 }
 
 .user-pill {
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: 10px;
-  border-radius: 10px;
-  background: rgba(255, 255, 255, 0.07);
+  gap: 12px;
+  padding: 10px 12px;
+  border-radius: 12px;
+  background: rgba(255, 255, 255, 0.04);
   cursor: pointer;
-  transition: 0.2s;
+  transition: all 0.2s ease;
+  border: 1px solid rgba(255, 255, 255, 0.02);
 }
 
 .user-pill:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.08);
+  border-color: rgba(255, 255, 255, 0.05);
 }
 
 .user-avatar {
-  width: 32px;
-  height: 32px;
+  width: 36px;
+  height: 36px;
   border-radius: 50%;
   background: var(--gold);
   display: flex;
   align-items: center;
   justify-content: center;
-  font-weight: 600;
-  font-size: 12px;
+  font-weight: 700;
+  font-size: 13px;
   color: var(--navy);
   flex-shrink: 0;
+  box-shadow: 0 2px 6px rgba(0, 0, 0, 0.1);
+}
+
+.user-info {
+  min-width: 0;
 }
 
 .user-name {
   font-size: 13px;
   color: #fff;
-  font-weight: 500;
+  font-weight: 600;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .user-role {
   font-size: 11px;
-  color: rgba(255, 255, 255, 0.5);
+  color: rgba(255, 255, 255, 0.45);
+  margin-top: 1px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.sidebar-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  font-size: 10px;
+  color: rgba(255, 255, 255, 0.22);
+  margin-top: 14px;
+  padding: 0 4px;
+  font-weight: 500;
+}
+
+.footer-team {
+  letter-spacing: 0.2px;
+}
+
+.footer-version {
+  letter-spacing: 0.5px;
 }
 
 .sidebar-overlay {
@@ -164,6 +250,7 @@
 @media (max-width: 768px) {
   .cma-sidebar {
     transform: translateX(-100%);
+    width: 260px;
   }
   .cma-sidebar.open {
     transform: translateX(0);

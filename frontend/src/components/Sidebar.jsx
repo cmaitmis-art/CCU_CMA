@@ -29,8 +29,10 @@ function Sidebar({ currentUser, currentPage, onNavigate, isOpen, onToggleOpen })
               onToggleOpen(false);
             }}
           >
-            <i className={item.icon}></i>
-            <span>{item.label}</span>
+            <div className="nav-icon-wrap">
+              <i className={item.icon}></i>
+            </div>
+            <span className="nav-label">{item.label}</span>
           </div>
         </div>
       );
@@ -55,10 +57,14 @@ function Sidebar({ currentUser, currentPage, onNavigate, isOpen, onToggleOpen })
         <div className="sidebar-bottom">
           <div className="user-pill" onClick={() => onNavigate('profile')}>
             <div className="user-avatar">{currentUser?.avatar || 'AD'}</div>
-            <div>
+            <div className="user-info">
               <div className="user-name">{currentUser?.name || 'Admin User'}</div>
               <div className="user-role">{currentUser?.role === 'Admin' ? 'CMA Administrator' : 'Management Assistant'}</div>
             </div>
+          </div>
+          <div className="sidebar-footer">
+            <span className="footer-team">Developed by CMA team</span>
+            <span className="footer-version">V1.0.0</span>
           </div>
         </div>
       </nav>

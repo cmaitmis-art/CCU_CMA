@@ -1,5 +1,6 @@
 -- Dump generated from D:\uni akka project\CCU_CMA\backend\data\cma.db
 -- Generation time: 2026-06-28T04:52:32.247Z
+-- Generation time: 2026-06-28T03:56:02.158Z
 
 PRAGMA foreign_keys = OFF;
 
