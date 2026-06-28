@@ -229,9 +229,9 @@ function SectionLabel({ children }) {
 
 function ViewField({ label, value }) {
   return (
-    <div style={{ background: theme.bg, borderRadius: 10, padding: 12 }}>
-      <div style={{ fontSize: 11, color: theme.text3, textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 13, fontWeight: 400, color: theme.text }}>{value ?? '—'}</div>
+    <div style={{ display: 'flex', borderBottom: `1px solid ${theme.border}`, padding: '9px 4px', fontSize: 13, alignItems: 'flex-start' }}>
+      <div style={{ width: '240px', color: theme.text2, fontWeight: 600, flexShrink: 0 }}>{label}</div>
+      <div style={{ color: theme.text, wordBreak: 'break-word', flex: 1 }}>{value == null || String(value).trim() === '' ? '—' : String(value)}</div>
     </div>
   );
 }
@@ -1216,7 +1216,7 @@ export default function MCManagementBackend({ currentUser }) {
   const maxPage = Math.max(1, Math.ceil(totalCount / pageSize));
 
   return (
-    <div style={{ padding: 24, fontFamily: "'DM Sans', sans-serif", background: theme.bg, minHeight: '100vh' }}>
+    <div style={{ padding: 24, fontFamily: "'Inter', sans-serif", background: theme.bg, minHeight: '100vh' }}>
       {/* Breadcrumb */}
       <div style={{ fontSize: 12, color: '#999', marginBottom: 16 }}>
         <span>Home</span> / <span>MC Management</span>
@@ -1292,13 +1292,16 @@ export default function MCManagementBackend({ currentUser }) {
               <option>Non Active</option>
               <option>Pending</option>
             </select>
-            <input
-              type="number"
-              placeholder="Year"
+            <select
               value={yearFilter}
               onChange={(e) => setYearFilter(e.target.value)}
-              style={{ padding: '6px 10px', borderRadius: 4, border: '1px solid #ddd', fontSize: 12, width: 90 }}
-            />
+              style={{ padding: '6px 10px', borderRadius: 4, border: '1px solid #ddd', fontSize: 12, minWidth: 95 }}
+            >
+              <option value="">All Years</option>
+              {Array.from({ length: new Date().getFullYear() - 2000 + 1 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
             <input
               type="text"
               placeholder="Category"
@@ -1385,13 +1388,13 @@ export default function MCManagementBackend({ currentUser }) {
                     <td style={{ ...cellStyle, overflow: 'visible' }}><StatusPill status={mc.status} /></td>
                     <td style={{ ...cellStyle, overflow: 'visible' }}>
                       <div style={{ display: 'flex', gap: 2 }}>
-                        <ActionBtn icon="fas fa-eye" color="#0066cc" title="View" onClick={() => openView(mc)} />
-                        <ActionBtn icon="fas fa-history" color="#6b7280" title="History" onClick={() => { setSelectedHistoryRecord(mc); setShowHistoryModal(true); }} />
+                        <ActionBtn icon="fas fa-eye" color={theme.blue} title="View" onClick={() => openView(mc)} />
+                        <ActionBtn icon="fas fa-history" color={theme.text2} title="History" onClick={() => { setSelectedHistoryRecord(mc); setShowHistoryModal(true); }} />
                         {String(mc.status || '').trim().toLowerCase() === 'pending' && (
                           <ActionBtn icon="fas fa-clipboard-check" color="#7c3aed" title="Verify Documents" onClick={() => openChecklist({ ...mc, status: 'Pending' })} />
                         )}
-                        <ActionBtn icon="fas fa-edit" color="#ffc107" title="Edit" onClick={() => openEdit(mc)} />
-                        <ActionBtn icon="fas fa-trash" color="#dc3545" title="Delete" onClick={() => remove(mc.id)} />
+                        <ActionBtn icon="fas fa-edit" color={theme.orange} title="Edit" onClick={() => openEdit(mc)} />
+                        <ActionBtn icon="fas fa-trash" color={theme.red} title="Delete" onClick={() => remove(mc.id)} />
                       </div>
                     </td>
                   </tr>
@@ -1506,7 +1509,7 @@ export default function MCManagementBackend({ currentUser }) {
       {/* View Modal — unchanged */}
       {viewModalOpen && viewRecord && (
         <div style={overlayStyle} onClick={(e) => e.target === e.currentTarget && setViewModalOpen(false)}>
-          <div style={{ ...modalStyle, maxWidth: 900 }}>
+          <div style={{ ...modalStyle, maxWidth: 720 }}>
             <div style={modalHeader}>
               <span style={{ fontSize: 16, fontWeight: 700 }}>MC Record Details</span>
               <button onClick={() => setViewModalOpen(false)} style={closeBtnStyle}>✕</button>
@@ -1514,7 +1517,7 @@ export default function MCManagementBackend({ currentUser }) {
 
             <div style={{ padding: 22, maxHeight: '70vh', overflowY: 'auto' }}>
               <div style={{ fontSize: 12, fontWeight: 700, color: theme.navy, textTransform: 'uppercase', letterSpacing: '1px', borderBottom: `1px solid ${theme.border}`, paddingBottom: 6, marginBottom: 12 }}>Identity &amp; Filing</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 12, marginBottom: 20 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 20 }}>
                 <ViewField label="Reg Date" value={formatDisplayDate(viewRecord.reg_date)} />
                 <ViewField label="Old File No" value={viewRecord.old_file_no} />
                 <ViewField label="New File No" value={viewRecord.new_file_no} />
@@ -1526,7 +1529,7 @@ export default function MCManagementBackend({ currentUser }) {
               </div>
 
               <div style={{ fontSize: 12, fontWeight: 700, color: theme.navy, textTransform: 'uppercase', letterSpacing: '1px', borderBottom: `1px solid ${theme.border}`, paddingBottom: 6, marginBottom: 12 }}>Units</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12, marginBottom: 20 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 20 }}>
                 <ViewField label="Total Units" value={viewRecord.units} />
                 <ViewField label="Residential" value={viewRecord.residential ?? viewRecord.residential_units} />
                 <ViewField label="Non Residential" value={viewRecord.non_residential ?? viewRecord.non_residential_units} />
@@ -1534,7 +1537,7 @@ export default function MCManagementBackend({ currentUser }) {
               </div>
 
               <div style={{ fontSize: 12, fontWeight: 700, color: theme.navy, textTransform: 'uppercase', letterSpacing: '1px', borderBottom: `1px solid ${theme.border}`, paddingBottom: 6, marginBottom: 12 }}>Classification &amp; Location</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 12, marginBottom: 20 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 20 }}>
                 <ViewField label="Category" value={viewRecord.category} />
                 <ViewField label="Year" value={viewRecord.year} />
                 <ViewField label="Town" value={viewRecord.town} />
@@ -1544,7 +1547,7 @@ export default function MCManagementBackend({ currentUser }) {
               </div>
 
               <div style={{ fontSize: 12, fontWeight: 700, color: theme.navy, textTransform: 'uppercase', letterSpacing: '1px', borderBottom: `1px solid ${theme.border}`, paddingBottom: 6, marginBottom: 12 }}>Registration Form Details</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12, marginBottom: 20 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 20 }}>
                 <ViewField label="Non-res Shops" value={viewRecord.non_res_shops} />
                 <ViewField label="Non-res Office" value={viewRecord.non_res_office} />
                 <ViewField label="Non-res Hotel" value={viewRecord.non_res_hotel} />
@@ -1591,7 +1594,7 @@ export default function MCManagementBackend({ currentUser }) {
               </div>
 
               <div style={{ fontSize: 12, fontWeight: 700, color: theme.navy, textTransform: 'uppercase', letterSpacing: '1px', borderBottom: `1px solid ${theme.border}`, paddingBottom: 6, marginBottom: 12 }}>Personnel</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12, marginBottom: 20 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 20 }}>
                 <ViewField label="Secretary" value={viewRecord.secretary} />
                 <ViewField label="Secretary Unit No" value={viewRecord.secretary_unit_no} />
                 <ViewField label="Treasurer" value={viewRecord.treasurer} />
@@ -1602,7 +1605,7 @@ export default function MCManagementBackend({ currentUser }) {
               </div>
 
               <div style={{ fontSize: 12, fontWeight: 700, color: theme.navy, textTransform: 'uppercase', letterSpacing: '1px', borderBottom: `1px solid ${theme.border}`, paddingBottom: 6, marginBottom: 12 }}>AGM &amp; Renewal</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12, marginBottom: 20 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 20 }}>
                 <ViewField label="AGM Date" value={viewRecord.agm_date} />
                 <ViewField label="Next AGM Date" value={viewRecord.next_agm_date} />
                 <ViewField label="Renewal Period" value={viewRecord.renewal_period} />
@@ -1611,7 +1614,7 @@ export default function MCManagementBackend({ currentUser }) {
               </div>
 
               <div style={{ fontSize: 12, fontWeight: 700, color: theme.navy, textTransform: 'uppercase', letterSpacing: '1px', borderBottom: `1px solid ${theme.border}`, paddingBottom: 6, marginBottom: 12 }}>Compliance Documents</div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(180px,1fr))', gap: 12, marginBottom: 20 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 20 }}>
                 <ViewField label="AGM Minutes" value={viewRecord.agm_minutes} />
                 <ViewField label="Attendance" value={viewRecord.attendance} />
                 <ViewField label="Audited Accounts" value={viewRecord.audited_accounts} />
@@ -1627,7 +1630,7 @@ export default function MCManagementBackend({ currentUser }) {
               </div>
 
               {/* Audit / timestamps */}
-              <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: 16, marginTop: 10 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginTop: 10 }}>
                 <ViewField label="Created At" value={viewRecord.created_at || '—'} />
                 <ViewField label="Updated At" value={viewRecord.updated_at || '—'} />
               </div>

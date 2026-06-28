@@ -447,31 +447,22 @@ export default function Records() {
                     <td>{r.category}</td>
                     <td style={{ whiteSpace: 'nowrap' }}>{r.date}</td>
                     <td>{statusToLabel(r.status)}</td>
-                    <td>
-                      <div className="btn-group">
-                        <button
-                          className="btn btn-outline btn-sm"
-                          onClick={() => {
-                            setViewRecord(r);
-                            setShowViewModal(true);
-                          }}
-                        >
-                          <i className="fas fa-eye" />
-                        </button>
-                        <button
-                          className="btn btn-outline btn-sm"
-                          onClick={() => alert(`Edit: ${r.module} - ${r.name}`)}
-                        >
-                          <i className="fas fa-edit" />
-                        </button>
-                        <button
-                          className="btn btn-danger btn-sm"
-                          onClick={() => alert(`Delete: ${r.module} - ${r.name} (not wired)`)}
-                        >
-                          <i className="fas fa-trash" />
-                        </button>
-                      </div>
-                    </td>
+                     <td style={{ textAlign: 'center' }}>
+                       <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
+                         <button onClick={() => { setViewRecord(r); setShowViewModal(true); }}
+                           style={{ background: 'none', border: 'none', color: '#2563eb', cursor: 'pointer', fontSize: 14, padding: 4 }} title="View">
+                           <i className="fas fa-eye" />
+                         </button>
+                         <button onClick={() => alert(`Edit: ${r.module} - ${r.name}`)}
+                           style={{ background: 'none', border: 'none', color: '#ea580c', cursor: 'pointer', fontSize: 14, padding: 4 }} title="Edit">
+                           <i className="fas fa-edit" />
+                         </button>
+                         <button onClick={() => alert(`Delete: ${r.module} - ${r.name} (not wired)`)}
+                           style={{ background: 'none', border: 'none', color: '#dc2626', cursor: 'pointer', fontSize: 14, padding: 4 }} title="Delete">
+                           <i className="fas fa-trash" />
+                         </button>
+                       </div>
+                     </td>
                   </tr>
                 ))
               )}

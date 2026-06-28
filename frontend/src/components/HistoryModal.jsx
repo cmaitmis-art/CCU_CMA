@@ -273,6 +273,21 @@ export default function HistoryModal({ isOpen, onClose, record, theme = defaultT
                           <i className="fas fa-clock" style={{ fontSize: 12, color: theme.text3 }} />
                           {formatDateTime(item.time || item.date)}
                         </div>
+                        {item.note && (
+                          <div style={{
+                            fontSize: 12,
+                            color: '#78350f',
+                            background: '#fffbeb',
+                            borderLeft: '3px solid #d97706',
+                            padding: '6px 10px',
+                            borderRadius: 6,
+                            marginTop: 8,
+                            lineHeight: '1.4'
+                          }}>
+                            <i className="fas fa-info-circle" style={{ marginRight: 6, color: '#d97706' }} />
+                            {item.note}
+                          </div>
+                        )}
                       </div>
                     </div>
                   );

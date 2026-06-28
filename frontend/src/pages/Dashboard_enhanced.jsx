@@ -14,6 +14,282 @@ function formatDate(value) {
   return `${String(date.getDate()).padStart(2, '0')}/${String(date.getMonth() + 1).padStart(2, '0')}/${date.getFullYear()}`;
 }
 
+const theme = {
+  navy: '#1a3a6b',
+  border: '#e2e8f0',
+  text: '#1a1a2e',
+  text2: '#5a6478',
+  text3: '#94a0b4',
+  blue: '#2563eb',
+  orange: '#ea580c',
+  red: '#dc2626',
+  teal: '#0d9488',
+};
+
+function DoughnutChart({ data }) {
+  const [hoveredIdx, setHoveredIdx] = useState(null);
+  
+  const total = data.reduce((sum, item) => sum + item.value, 0);
+  if (total === 0) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: 160, color: theme.text3, fontSize: 13 }}>
+        No data to display
+      </div>
+    );
+  }
+
+  const radius = 38;
+  const strokeWidth = 10;
+  const circ = 2 * Math.PI * radius; // 238.76
+  
+  let currentOffset = 0;
+
+  return (
+    <div style={{ display: 'flex', alignItems: 'center', gap: 20, flexWrap: 'wrap', justifyContent: 'center', marginTop: 20 }}>
+      {/* SVG Doughnut */}
+      <div style={{ position: 'relative', width: 110, height: 110 }}>
+        <svg width="100%" height="100%" viewBox="0 0 100 100" style={{ transform: 'rotate(-90deg)' }}>
+          {data.map((item, idx) => {
+            if (item.value === 0) return null;
+            const pct = (item.value / total) * 100;
+            const strokeLength = (pct * circ) / 100;
+            const strokeOffset = circ - currentOffset;
+            currentOffset += strokeLength;
+            
+            const isHovered = hoveredIdx === idx;
+
+            return (
+              <circle
+                key={item.name}
+                cx="50"
+                cy="50"
+                r={radius}
+                fill="transparent"
+                stroke={item.color}
+                strokeWidth={isHovered ? strokeWidth + 2 : strokeWidth}
+                strokeDasharray={`${strokeLength} ${circ}`}
+                strokeDashoffset={strokeOffset}
+                strokeLinecap="round"
+                style={{
+                  transition: 'all 0.3s cubic-bezier(0.4, 0, 0.2, 1)',
+                  cursor: 'pointer',
+                }}
+                onMouseEnter={() => setHoveredIdx(idx)}
+                onMouseLeave={() => setHoveredIdx(null)}
+              />
+            );
+          })}
+        </svg>
+        {/* Central Text */}
+        <div style={{
+          position: 'absolute',
+          top: 0, left: 0, right: 0, bottom: 0,
+          display: 'flex', flexDirection: 'column',
+          alignItems: 'center', justifyContent: 'center',
+          pointerEvents: 'none',
+        }}>
+          <span style={{ fontSize: 18, fontWeight: 700, color: theme.text }}>
+            {hoveredIdx !== null ? data[hoveredIdx].value : total}
+          </span>
+          <span style={{ fontSize: 9, color: theme.text3, textTransform: 'uppercase', fontWeight: 600, letterSpacing: '0.5px' }}>
+            {hoveredIdx !== null ? data[hoveredIdx].name.split(' ')[0] : 'Total'}
+          </span>
+        </div>
+      </div>
+
+      {/* Legend */}
+      <div style={{ display: 'flex', flexDirection: 'column', gap: 6, minWidth: 140 }}>
+        {data.map((item, idx) => {
+          if (item.value === 0) return null;
+          const pct = ((item.value / total) * 100).toFixed(1);
+          const isHovered = hoveredIdx === idx;
+          return (
+            <div
+              key={item.name}
+              style={{
+                display: 'flex',
+                alignItems: 'center',
+                gap: 8,
+                fontSize: 12,
+                cursor: 'pointer',
+                opacity: hoveredIdx === null || isHovered ? 1 : 0.6,
+                transform: isHovered ? 'translateX(4px)' : 'none',
+                transition: 'all 0.2s',
+              }}
+              onMouseEnter={() => setHoveredIdx(idx)}
+              onMouseLeave={() => setHoveredIdx(null)}
+            >
+              <div style={{ width: 8, height: 8, borderRadius: '50%', backgroundColor: item.color }} />
+              <div style={{ flex: 1, color: theme.text2, fontWeight: isHovered ? 600 : 400, whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>{item.name}</div>
+              <div style={{ fontWeight: 600, color: theme.text }}>{pct}%</div>
+            </div>
+          );
+        })}
+      </div>
+    </div>
+  );
+}
+
+function OperationBarChart({ stats }) {
+  const [hoveredBar, setHoveredBar] = useState(null);
+
+  const data = [
+    {
+      module: 'MC Registry',
+      active: stats.mc,
+      pending: stats.pendingMc || 0,
+      colorActive: theme.navy,
+      colorPending: theme.orange,
+    },
+    {
+      module: 'M.Com Registry',
+      active: stats.mcom,
+      pending: stats.pendingMcom || 0,
+      colorActive: theme.teal,
+      colorPending: theme.red,
+    },
+    {
+      module: 'C-Files',
+      active: Math.max(0, stats.cfiles - (stats.pendingCfiles || 0)),
+      pending: stats.pendingCfiles || 0,
+      colorActive: theme.blue,
+      colorPending: theme.orange,
+    },
+    {
+      module: 'Complaints',
+      active: 0,
+      pending: stats.pendingComplaints || 0,
+      colorActive: theme.teal,
+      colorPending: theme.red,
+    },
+  ];
+
+  const maxVal = Math.max(...data.map(d => d.active + d.pending), 10);
+  
+  const height = 150;
+  const barWidth = 32;
+  const gap = 60;
+  const paddingLeft = 40;
+  const paddingTop = 20;
+
+  return (
+    <div style={{ marginTop: 10 }}>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: 16 }}>
+        <span style={{ fontSize: 15, fontWeight: 700, color: theme.text }}>Registry Workload Status</span>
+        <div style={{ display: 'flex', gap: 12, fontSize: 11 }}>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div style={{ width: 10, height: 10, borderRadius: 2, backgroundColor: theme.navy }} />
+            <span style={{ color: theme.text2 }}>Active / Completed</span>
+          </div>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 4 }}>
+            <div style={{ width: 10, height: 10, borderRadius: 2, backgroundColor: theme.orange }} />
+            <span style={{ color: theme.text2 }}>Pending / Overdue</span>
+          </div>
+        </div>
+      </div>
+
+      <div style={{ position: 'relative', width: '100%', overflowX: 'auto', background: '#fafbfc', borderRadius: 12, border: `1px solid ${theme.border}`, padding: '16px 12px' }}>
+        <svg width="100%" height={height + 40} viewBox={`0 0 460 ${height + 40}`} style={{ display: 'block', margin: '0 auto' }}>
+          {/* Horizontal Grid Lines */}
+          {[0, 0.25, 0.5, 0.75, 1].map((r, i) => {
+            const y = paddingTop + height * (1 - r);
+            const labelVal = Math.round(maxVal * r);
+            return (
+              <g key={i}>
+                <line x1={paddingLeft} y1={y} x2="430" y2={y} stroke="#e2e8f0" strokeDasharray="3 3" />
+                <text x={paddingLeft - 8} y={y + 4} fill={theme.text3} fontSize="9" textAnchor="end">{labelVal}</text>
+              </g>
+            );
+          })}
+
+          {/* Render Bars */}
+          {data.map((d, idx) => {
+            const x = paddingLeft + idx * (barWidth + gap) + 15;
+            
+            const activeHeight = d.active > 0 ? (d.active / maxVal) * height : 0;
+            const pendingHeight = d.pending > 0 ? (d.pending / maxVal) * height : 0;
+            
+            const activeY = paddingTop + height - activeHeight;
+            const pendingY = activeY - pendingHeight;
+
+            const isHovered = hoveredBar === idx;
+
+            return (
+              <g key={d.module}
+                onMouseEnter={() => setHoveredBar(idx)}
+                onMouseLeave={() => setHoveredBar(null)}
+                style={{ cursor: 'pointer' }}
+              >
+                {/* Active Stack */}
+                {d.active > 0 && (
+                  <rect
+                    x={x}
+                    y={activeY}
+                    width={barWidth}
+                    height={activeHeight}
+                    fill={d.colorActive}
+                    rx="3"
+                    style={{ transition: 'opacity 0.2s', opacity: isHovered ? 0.85 : 1 }}
+                  />
+                )}
+
+                {/* Pending Stack */}
+                {d.pending > 0 && (
+                  <rect
+                    x={x}
+                    y={pendingY}
+                    width={barWidth}
+                    height={pendingHeight}
+                    fill={d.colorPending}
+                    rx="3"
+                    style={{ transition: 'opacity 0.2s', opacity: isHovered ? 0.85 : 1 }}
+                  />
+                )}
+
+                {/* Hover Tooltip Overlay */}
+                {isHovered && (
+                  <g>
+                    <rect
+                      x={x - 22}
+                      y={Math.min(activeY, pendingY) - 34}
+                      width={barWidth + 44}
+                      height={28}
+                      fill="#1e293b"
+                      rx="6"
+                    />
+                    <text
+                      x={x + barWidth / 2}
+                      y={Math.min(activeY, pendingY) - 16}
+                      fill="#fff"
+                      fontSize="9"
+                      fontWeight="600"
+                      textAnchor="middle"
+                    >
+                      {d.active > 0 ? `Act: ${d.active} ` : ''}{`Pend: ${d.pending}`}
+                    </text>
+                  </g>
+                )}
+
+                {/* Label */}
+                <text
+                  x={x + barWidth / 2}
+                  y={paddingTop + height + 18}
+                  fill={theme.text2}
+                  fontSize="10"
+                  fontWeight="600"
+                  textAnchor="middle"
+                >
+                  {d.module}
+                </text>
+              </g>
+            );
+          })}
+        </svg>
+      </div>
+    </div>
+  );
+}
+
 function Dashboard({ onNavigate }) {
   const [stats, setStats] = useState({
     mc: 0,
@@ -339,7 +615,7 @@ function Dashboard({ onNavigate }) {
             <span className="card-title">System Summary — 2026</span>
           </div>
           <div className="card-body">
-            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px' }}>
+            <div style={{ display: 'grid', gridTemplateColumns: '1fr 1fr', gap: '15px', borderBottom: `1px solid ${theme.border}`, paddingBottom: 16 }}>
               <div style={{ textAlign: 'center' }}>
                 <div className="stat-value" style={{ color: '#1976d2' }}>{stats.mc}</div>
                 <div style={{ fontSize: '12px', color: 'var(--text3)' }}>Active MCs</div>
@@ -357,8 +633,21 @@ function Dashboard({ onNavigate }) {
                 <div style={{ fontSize: '12px', color: 'var(--text3)' }}>Resolved</div>
               </div>
             </div>
+            
+            <DoughnutChart
+              data={[
+                { name: 'Active MCs', value: stats.mc, color: theme.navy },
+                { name: 'Active M.Coms', value: stats.mcom, color: theme.teal },
+                { name: 'Total C-Files', value: stats.cfiles, color: theme.blue },
+                { name: 'Pending Complaints', value: stats.pendingComplaints, color: theme.orange },
+              ]}
+            />
           </div>
         </div>
+      </div>
+
+      <div className="card" style={{ marginTop: 24, padding: 20 }}>
+        <OperationBarChart stats={stats} />
       </div>
 
       {/* Due Reminder Alert Modal */}

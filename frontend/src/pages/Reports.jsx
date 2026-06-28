@@ -69,7 +69,27 @@ const CARDS = [
 ];
 
 const DATE_KEYS = ['reg_date', 'date', 'agm_date', 'next_agm_date', 'complaint_date', 'resolution_date'];
-const WRAP_KEYS = ['address', 'reason', 'description', 'remarks'];
+const NOWRAP_KEYS = [
+  'file_no', 
+  'reg_date', 
+  'date', 
+  'agm_date', 
+  'next_agm_date', 
+  'complaint_date', 
+  'resolution_date', 
+  'status', 
+  'year', 
+  'units', 
+  'id', 
+  'plan_no', 
+  'priority', 
+  'days_pending',
+  'file_type',
+  'renewal_period',
+  'agm_status',
+  'renewal_status',
+  'attendance'
+];
 
 const fmtDate = v => { const m = String(v).match(/^(\d{4})-(\d{2})-(\d{2})$/); return m ? `${m[3]}/${m[2]}/${m[1]}` : String(v); };
 const fv = (row, key) => {
@@ -103,13 +123,13 @@ function printTable(title, sub, rows, fields) {
     .replace(/'/g, '&#039;');
 
   const css = `
-    @page{size:landscape;margin:10mm}
-    html,body{font-family:sans-serif;font-size:10px;color:#1a1a2e;margin:0}
-    .hdr{background:#1a3a6b;color:#fff;padding:12px 16px;border-radius:8px;margin-bottom:12px}
-    .hdr h2{margin:0;font-size:15px}.hdr p{margin:3px 0 0;font-size:10px;opacity:.7}
+    @page{size:landscape;margin:8mm}
+    html,body{font-family:sans-serif;font-size:9px;color:#1a1a2e;margin:0}
+    .hdr{background:#1a3a6b;color:#fff;padding:10px 14px;border-radius:8px;margin-bottom:10px}
+    .hdr h2{margin:0;font-size:14px}.hdr p{margin:3px 0 0;font-size:9px;opacity:.7}
     table{width:100%;border-collapse:collapse;table-layout:auto}
-    th{background:#edf2f7;padding:6px 8px;text-align:left;border:1px solid #cbd5e0;font-size:9px;text-transform:uppercase;font-weight:700;white-space:nowrap}
-    td{padding:6px 8px;border:1px solid #cbd5e0;vertical-align:top;word-break:break-word;white-space:normal}
+    th{background:#edf2f7;padding:5px 6px;text-align:left;border:1px solid #cbd5e0;font-size:8px;text-transform:uppercase;font-weight:700;white-space:nowrap}
+    td{padding:5px 6px;border:1px solid #cbd5e0;vertical-align:top;word-break:break-word;white-space:normal;font-size:8.5px}
     tr:nth-child(even) td{background:#f7fafc}
     .nowrap{white-space:nowrap}
   `;
@@ -122,7 +142,7 @@ function printTable(title, sub, rows, fields) {
         ${rows.map((r, i) => {
           const tds = fields.map(f => {
             const val = fv(r, f.key);
-            const cls = WRAP_KEYS.includes(f.key) ? '' : 'nowrap';
+            const cls = NOWRAP_KEYS.includes(f.key) ? 'nowrap' : '';
             return `<td class="${cls}">${escapeHtml(val)}</td>`;
           }).join('');
           return `<tr><td>${i + 1}</td>${tds}</tr>`;
@@ -210,8 +230,8 @@ function DataTable({ rows, fields }) {
                           padding: 8, borderBottom: '1px solid var(--border)',
                           fontWeight: f.key === 'status' ? 700 : 400,
                           color: f.key === 'status' ? statusColor(fv(row, f.key)) : undefined,
-                          whiteSpace: WRAP_KEYS.includes(f.key) ? 'normal' : 'nowrap',
-                          maxWidth: WRAP_KEYS.includes(f.key) ? 200 : undefined
+                          whiteSpace: NOWRAP_KEYS.includes(f.key) ? 'nowrap' : 'normal',
+                          maxWidth: NOWRAP_KEYS.includes(f.key) ? undefined : 200
                         }}>
                           {fv(row, f.key)}
                         </td>

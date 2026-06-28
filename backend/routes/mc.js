@@ -312,7 +312,8 @@ router.post('/', async (req, res) => {
     const initialHistory = [{
       name: user_name,
       action: 'Added',
-      time: new Date().toISOString()
+      time: new Date().toISOString(),
+      note: 'Initial registration'
     }];
 
     const record = await ManagementCorporation.create({
@@ -355,10 +356,39 @@ router.patch('/:id', async (req, res) => {
     } catch (e) {
       history = [];
     }
+
+    const changedFields = [];
+    const ignoreFields = ['updated_at', 'created_at', 'modified_by', 'created_by', 'history', 'user_name'];
+    for (const key of Object.keys(data)) {
+      if (ignoreFields.includes(key)) continue;
+      const oldVal = record[key] === '' ? null : record[key];
+      const newVal = data[key] === '' ? null : data[key];
+      
+      if ((oldVal == null) !== (newVal == null)) {
+        const prettyKey = key.replace(/^cl_/, 'checklist: ').replace(/_/g, ' ');
+        changedFields.push(prettyKey);
+      } else if (oldVal != null && newVal != null) {
+        if (String(oldVal) !== String(newVal)) {
+          const prettyKey = key.replace(/^cl_/, 'checklist: ').replace(/_/g, ' ');
+          changedFields.push(prettyKey);
+        }
+      }
+    }
+
+    let note = 'Modified record';
+    if (data.status === 'Active' && record.status !== 'Active') {
+      note = 'Approved & Activated record';
+    } else if (data.status === 'Non Active' && record.status !== 'Non Active') {
+      note = 'Rejected record';
+    } else if (changedFields.length > 0) {
+      note = `Updated ${changedFields.join(', ')}`;
+    }
+
     history.push({
       name: user_name,
       action: 'Modified',
-      time: new Date().toISOString()
+      time: new Date().toISOString(),
+      note
     });
 
     await record.update({
