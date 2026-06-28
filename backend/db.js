@@ -15,6 +15,22 @@
  * This keeps the code consistent — all queries go through Sequelize models.
  */
 
+// Shim Sequelize.Op for Sequelize v3 compatibility
+const sequelizeModule = require('sequelize');
+sequelizeModule.Op = sequelizeModule.Op || {
+  like: '$like',
+  or: '$or',
+  and: '$and',
+  lte: '$lte',
+  gte: '$gte',
+  ne: '$ne',
+  in: '$in',
+  eq: '$eq',
+};
+if (sequelizeModule.Model && !sequelizeModule.Model.prototype.findByPk) {
+  sequelizeModule.Model.prototype.findByPk = sequelizeModule.Model.prototype.findById;
+}
+
 const path = require('path');
 const fs = require('fs');
 const { Sequelize } = require('sequelize');

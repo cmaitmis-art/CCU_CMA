@@ -113,7 +113,7 @@ function CMAApp() {
       <div className="cma-app">
         <Sidebar currentUser={currentUser} currentPage={currentPage} onNavigate={setCurrentPage} onToggleOpen={setSidebarOpen} isOpen={sidebarOpen} />
         <div className="cma-main-wrap">
-          <Topbar currentUser={currentUser} currentPage={currentPage} onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} onLogout={handleLogout} />
+          <Topbar currentUser={currentUser} currentPage={currentPage} onToggleSidebar={() => setSidebarOpen(!sidebarOpen)} onLogout={handleLogout} onNavigate={setCurrentPage} />
           <main className="cma-main">
             <CurrentPage onNavigate={setCurrentPage} currentUser={currentUser} />
           </main>
