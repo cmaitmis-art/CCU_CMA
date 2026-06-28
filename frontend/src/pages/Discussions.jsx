@@ -745,7 +745,7 @@ export default function DiscussionManagement({ currentUser }) {
   const pageCount = Math.max(1, Math.ceil((totalCount || filteredDiscussions.length) / limit));
 
   return (
-    <div style={{ minHeight: '100vh', background: theme.bg, padding: 24, fontFamily: "'DM Sans', sans-serif" }}>
+    <div style={{ minHeight: '100vh', background: theme.bg, padding: 24, fontFamily: "'Inter', sans-serif" }}>
       {/* Breadcrumb */}
       <div style={{ marginBottom: 16, fontSize: 12, color: theme.text3 }}>
         Home / Discussion Management
@@ -1073,46 +1073,28 @@ export default function DiscussionManagement({ currentUser }) {
                     </td>
                     <td style={{ padding: '10px 12px', whiteSpace: 'nowrap' }}>
                       <div style={{ display: 'flex', gap: 5 }}>
-                        <button
-                          onClick={() => { setViewRecord(discussion); setShowViewModal(true); }}
-                          title="View"
-                          style={{ ...btnBase, padding: '5px 9px', fontSize: 12, background: '#eff6ff', color: '#2563eb', border: '1px solid #bfdbfe' }}
-                        >
+                        <button onClick={() => { setViewRecord(discussion); setShowViewModal(true); }}
+                          style={{ background: 'none', border: 'none', color: theme.blue, cursor: 'pointer', fontSize: 14, padding: 4 }} title="View">
                           <i className="fas fa-eye" />
                         </button>
-                        <button
-                          onClick={() => { setSelectedHistoryRecord(discussion); setShowHistoryModal(true); }}
-                          title="History"
-                          style={{ ...btnBase, padding: '5px 9px', fontSize: 12, background: '#f8fafc', color: '#6b7280', border: '1px solid #e2e8f0' }}
-                        >
+                        <button onClick={() => { setSelectedHistoryRecord(discussion); setShowHistoryModal(true); }}
+                          style={{ background: 'none', border: 'none', color: theme.text2, cursor: 'pointer', fontSize: 14, padding: 4 }} title="History">
                           <i className="fas fa-history" />
                         </button>
-                        <button
-                          onClick={() => handleOpenModal(discussion)}
-                          title="Edit"
-                          style={{ ...btnBase, padding: '5px 9px', fontSize: 12, background: '#f8fafc', color: '#1a3a6b', border: '1px solid #e2e8f0' }}
-                        >
+                        <button onClick={() => handleOpenModal(discussion)}
+                          style={{ background: 'none', border: 'none', color: theme.orange, cursor: 'pointer', fontSize: 14, padding: 4 }} title="Edit">
                           <i className="fas fa-edit" />
                         </button>
-                        <button
-                          onClick={() => downloadRow(discussion)}
-                          title="Download PDF"
-                          style={{ ...btnBase, padding: '5px 9px', fontSize: 12, background: '#fef2f2', color: '#dc2626', border: '1px solid #fecaca' }}
-                        >
+                        <button onClick={() => downloadRow(discussion)}
+                          style={{ background: 'none', border: 'none', color: theme.navy, cursor: 'pointer', fontSize: 14, padding: 4 }} title="Download PDF">
                           <i className="fas fa-file-pdf" />
                         </button>
-                        <button
-                          onClick={() => printRow(discussion)}
-                          title="Print Notice"
-                          style={{ ...btnBase, padding: '5px 9px', fontSize: 12, background: '#f8fafc', color: '#374151', border: '1px solid #e2e8f0' }}
-                        >
+                        <button onClick={() => printRow(discussion)}
+                          style={{ background: 'none', border: 'none', color: theme.text2, cursor: 'pointer', fontSize: 14, padding: 4 }} title="Print Notice">
                           <i className="fas fa-print" />
                         </button>
-                        <button
-                          onClick={() => handleDelete(discussion.id)}
-                          title="Delete"
-                          style={{ ...btnBase, padding: '5px 9px', fontSize: 12, background: '#fff1f2', color: '#dc2626', border: '1px solid #fecaca' }}
-                        >
+                        <button onClick={() => handleDelete(discussion.id)}
+                          style={{ background: 'none', border: 'none', color: theme.red, cursor: 'pointer', fontSize: 14, padding: 4 }} title="Delete">
                           <i className="fas fa-trash" />
                         </button>
                       </div>

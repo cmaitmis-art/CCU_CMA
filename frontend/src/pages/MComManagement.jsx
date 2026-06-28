@@ -223,9 +223,9 @@ function SectionLabel({ children }) {
 
 function ViewField({ label, value }) {
   return (
-    <div style={{ background: theme.bg, borderRadius: 10, padding: 12 }}>
-      <div style={{ fontSize: 11, color: theme.text3, textTransform: 'uppercase', letterSpacing: '.6px', marginBottom: 4 }}>{label}</div>
-      <div style={{ fontSize: 13, fontWeight: 400, color: theme.text }}>{value ?? '—'}</div>
+    <div style={{ display: 'flex', borderBottom: `1px solid ${theme.border}`, padding: '9px 4px', fontSize: 13, alignItems: 'flex-start' }}>
+      <div style={{ width: '240px', color: theme.text2, fontWeight: 600, flexShrink: 0 }}>{label}</div>
+      <div style={{ color: theme.text, wordBreak: 'break-word', flex: 1 }}>{value == null || String(value).trim() === '' ? '—' : String(value)}</div>
     </div>
   );
 }
@@ -795,7 +795,7 @@ export default function MComManagement({ currentUser }) {
   const maxPage = Math.max(1, Math.ceil(totalCount / pageSize));
 
   return (
-    <div style={{ padding: 24, fontFamily: "'DM Sans', sans-serif", background: theme.bg, minHeight: '100vh' }}>
+    <div style={{ padding: 24, fontFamily: "'Inter', sans-serif", background: theme.bg, minHeight: '100vh' }}>
       <div style={{ fontSize: 12, color: '#999', marginBottom: 16 }}>
         <span>Home</span> / <span>M.Com Management</span>
       </div>
@@ -867,7 +867,16 @@ export default function MComManagement({ currentUser }) {
               <option value="Pending">Pending</option>
               <option value="Close">Close</option>
             </select>
-            <input type="number" placeholder="Year" value={yearFilter} onChange={(e) => setYearFilter(e.target.value)} style={{ padding: '8px 12px', borderRadius: 4, border: '1px solid #ddd', fontSize: 13, width: 120 }} />
+            <select
+              value={yearFilter}
+              onChange={(e) => setYearFilter(e.target.value)}
+              style={{ padding: '8px 12px', borderRadius: 4, border: '1px solid #ddd', fontSize: 13, minWidth: 120 }}
+            >
+              <option value="">All Years</option>
+              {Array.from({ length: new Date().getFullYear() - 2000 + 1 }, (_, i) => new Date().getFullYear() - i).map((y) => (
+                <option key={y} value={y}>{y}</option>
+              ))}
+            </select>
             <input type="text" placeholder="Category" value={categoryFilter} onChange={(e) => setCategoryFilter(e.target.value)} style={{ padding: '8px 12px', borderRadius: 4, border: '1px solid #ddd', fontSize: 13, width: 150 }} />
             <button onClick={() => setViewAll((v) => !v)} style={viewAll ? btnPrimary : btnOutline} title="Load up to 1000 rows">
               {viewAll ? 'View Paging' : 'View All (1000)'}
@@ -933,10 +942,10 @@ export default function MComManagement({ currentUser }) {
                      <td style={{ ...cellStyle, overflow: 'visible' }}><StatusPill status={mc.status} /></td>
                      <td style={{ ...cellStyle, overflow: 'visible' }}>
                        <div style={{ display: 'flex', gap: 2 }}>
-                         <ActionBtn icon="fas fa-eye" color="#0066cc" title="View" onClick={() => openView(mc)} />
-                         <ActionBtn icon="fas fa-history" color="#6b7280" title="History" onClick={() => { setSelectedHistoryRecord(mc); setShowHistoryModal(true); }} />
-                         <ActionBtn icon="fas fa-edit" color="#ffc107" title="Edit" onClick={() => openEdit(mc)} />
-                         <ActionBtn icon="fas fa-trash" color="#dc3545" title="Delete" onClick={() => remove(mc.id)} />
+                         <ActionBtn icon="fas fa-eye" color={theme.blue} title="View" onClick={() => openView(mc)} />
+                         <ActionBtn icon="fas fa-history" color={theme.text2} title="History" onClick={() => { setSelectedHistoryRecord(mc); setShowHistoryModal(true); }} />
+                         <ActionBtn icon="fas fa-edit" color={theme.orange} title="Edit" onClick={() => openEdit(mc)} />
+                         <ActionBtn icon="fas fa-trash" color={theme.red} title="Delete" onClick={() => remove(mc.id)} />
                        </div>
                      </td>
                    </tr>
@@ -949,13 +958,13 @@ export default function MComManagement({ currentUser }) {
 
       {modalOpen && (
         <div style={overlayStyle} onClick={(e) => e.target === e.currentTarget && setModalOpen(false)}>
-          <div style={modalStyle}>
+          <div style={{ ...modalStyle, maxWidth: 580 }}>
             <div style={modalHeader}>
               <span style={{ fontSize: 16, fontWeight: 700 }}>{editingId ? 'Edit M.Com Record' : 'Add M.Com Record'}</span>
               <button onClick={() => setModalOpen(false)} style={closeBtnStyle}>✕</button>
             </div>
 
-            <div style={{ padding: 22, display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(230px,1fr))', gap: 14, maxHeight: '65vh', overflowY: 'auto' }}>
+            <div style={{ padding: 22, display: 'flex', flexDirection: 'column', gap: 14, maxHeight: '65vh', overflowY: 'auto' }}>
               <SectionLabel>Identity &amp; Filing</SectionLabel>
               <FormField label="Reg Date" value={formData.reg_date} onChange={field('reg_date')} />
               <FormField label="Old File No" value={formData.old_file_no} onChange={field('old_file_no')} />
@@ -1013,7 +1022,7 @@ export default function MComManagement({ currentUser }) {
 
       {viewModalOpen && viewRecord && (
         <div style={overlayStyle} onClick={(e) => e.target === e.currentTarget && setViewModalOpen(false)}>
-          <div style={{ ...modalStyle, maxWidth: 1000 }}>
+          <div style={{ ...modalStyle, maxWidth: 720 }}>
             <div style={modalHeader}>
               <span style={{ fontSize: 16, fontWeight: 700 }}>M.Com Record Details</span>
               <button onClick={() => setViewModalOpen(false)} style={closeBtnStyle}>✕</button>
@@ -1023,7 +1032,7 @@ export default function MComManagement({ currentUser }) {
               <div style={{ fontSize: 12, fontWeight: 700, color: theme.navy, textTransform: 'uppercase', letterSpacing: '1px', borderBottom: `1px solid ${theme.border}`, paddingBottom: 6, marginBottom: 12 }}>
                 Identity &amp; Filing
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 12, marginBottom: 20 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 20 }}>
                 <ViewField label="Reg Date" value={viewRecord.reg_date} />
                 <ViewField label="Old File No" value={viewRecord.old_file_no} />
                 <ViewField label="New File No" value={viewRecord.new_file_no} />
@@ -1041,7 +1050,7 @@ export default function MComManagement({ currentUser }) {
               <div style={{ fontSize: 12, fontWeight: 700, color: theme.navy, textTransform: 'uppercase', letterSpacing: '1px', borderBottom: `1px solid ${theme.border}`, paddingBottom: 6, marginBottom: 12 }}>
                 Personnel
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 12, marginBottom: 20 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 20 }}>
                 <ViewField label="Secretary" value={viewRecord.secretary} />
                 <ViewField label="Secretary Unit No" value={viewRecord.secretary_unit_no} />
                 <ViewField label="Treasurer" value={viewRecord.treasurer} />
@@ -1054,7 +1063,7 @@ export default function MComManagement({ currentUser }) {
               <div style={{ fontSize: 12, fontWeight: 700, color: theme.navy, textTransform: 'uppercase', letterSpacing: '1px', borderBottom: `1px solid ${theme.border}`, paddingBottom: 6, marginBottom: 12 }}>
                 AGM / Renewal
               </div>
-              <div style={{ display: 'grid', gridTemplateColumns: 'repeat(auto-fit,minmax(200px,1fr))', gap: 12, marginBottom: 20 }}>
+              <div style={{ display: 'flex', flexDirection: 'column', gap: 0, marginBottom: 20 }}>
                 <ViewField label="Renewal Period" value={viewRecord.renewal_period} />
                 <ViewField label="AGM Date" value={viewRecord.agm_date} />
                 <ViewField label="AGM Minutes" value={viewRecord.agm_minutes} />

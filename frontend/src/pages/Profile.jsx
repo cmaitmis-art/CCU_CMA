@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from 'react';
+import { useConfirmDialog } from '../ConfirmDialogContext.jsx';
 
 const theme = {
   navy: '#1a3a6b',
@@ -65,6 +66,8 @@ function toYMD(d) {
 
 export default function Profile({ currentUser }) {
   const [toast, setToast] = useState(null);
+  const confirm = useConfirmDialog();
+  const [timelineItems, setTimelineItems] = useState([]);
 
   const userId = currentUser?.id;
 
@@ -100,14 +103,11 @@ export default function Profile({ currentUser }) {
       role: roleLabel,
       department: isSystemAdmin ? 'CMA — IT / System Division' : 'CMA — CCU Division',
       year: '2026',
-      timeline: [
-        { time: '10 min ago', text: 'MC record updated — Liberty Plaza' },
-        { time: '1 hour ago', text: 'C File updated — CF-2026-004' },
-        { time: '3 hours ago', text: 'Complaint resolved — CMP-2026-002' },
-        { time: 'Yesterday', text: 'M.Com record — Peterson Court updated' },
+      timeline: timelineItems.length > 0 ? timelineItems : [
+        { time: 'Active', text: 'No recent activity logs recorded for your account yet.' }
       ],
     };
-  }, [currentUser]);
+  }, [currentUser, timelineItems]);
 
   function showToast(msg, type = 'success') {
     setToast({ msg, type });
@@ -135,34 +135,51 @@ export default function Profile({ currentUser }) {
     }
   }
 
-  async function fetchSingleToForm(date) {
-    if (!userId) return;
-
+  async function fetchTimeline() {
+    if (!currentUser?.name && !currentUser?.username) return;
     try {
       const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3001/api';
-      const url = new URL(`${API_BASE}/daily-activities`);
-      url.searchParams.append('user_id', String(userId));
-      url.searchParams.append('date', date);
-
-      const resp = await fetch(url.toString());
+      const params = new URLSearchParams({
+        name: currentUser.name || '',
+        username: currentUser.username || '',
+      });
+      const resp = await fetch(`${API_BASE}/daily-activities/user-timeline?${params.toString()}`);
       const data = await resp.json();
       const items = Array.isArray(data.items) ? data.items : [];
-      const first = items[0];
-
-      if (!first) {
-        setActivityText('');
-        setActivityCategory('');
-        setActivityStatus('');
-        return;
-      }
-
-      setActivityText(first.activity_text || '');
-      setActivityCategory(first.activity_category || '');
-      setActivityStatus(first.status || '');
-    } catch {
-      // ignore
+      
+      const formattedItems = items.map((it) => {
+        const diffMs = Date.now() - new Date(it.time).getTime();
+        const diffMins = Math.max(0, Math.floor(diffMs / (1000 * 60)));
+        const diffHours = Math.floor(diffMins / 60);
+        const diffDays = Math.floor(diffHours / 24);
+        
+        let relativeTime = 'Just now';
+        if (diffDays > 0) {
+          relativeTime = diffDays === 1 ? 'Yesterday' : `${diffDays} days ago`;
+        } else if (diffHours > 0) {
+          relativeTime = diffHours === 1 ? '1 hour ago' : `${diffHours} hours ago`;
+        } else if (diffMins > 0) {
+          relativeTime = diffMins === 1 ? '1 min ago' : `${diffMins} mins ago`;
+        }
+        
+        return {
+          time: relativeTime,
+          text: it.text,
+        };
+      });
+      
+      setTimelineItems(formattedItems);
+    } catch (e) {
+      console.error('Failed to fetch user timeline:', e);
     }
   }
+
+  useEffect(() => {
+    fetchTimeline();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [currentUser]);
+
+
 
   useEffect(() => {
     if (!userId) return;
@@ -170,11 +187,7 @@ export default function Profile({ currentUser }) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [userId, activitiesDateFilter, showAllDays]);
 
-  useEffect(() => {
-    if (!userId) return;
-    fetchSingleToForm(activityDate);
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [userId, activityDate]);
+
 
   async function handleUpsertDailyActivity() {
     if (!userId) return;
@@ -211,14 +224,43 @@ export default function Profile({ currentUser }) {
       }
 
       showToast('Daily activity updated', 'success');
+      setActivityText('');
+      setActivityCategory('');
+      setActivityStatus('');
 
-      // refresh list + form
+      // refresh list
       await fetchActivities({ date: activitiesDateFilter, allDays: showAllDays });
-      await fetchSingleToForm(activityDate);
     } catch (e) {
       showToast(e?.message || 'Failed to save daily activity', 'error');
     } finally {
       setSavingActivity(false);
+    }
+  }
+
+  async function handleDeleteActivity(id) {
+    const confirmed = await confirm({
+      title: 'Delete Activity',
+      message: 'Are you sure you want to delete this activity? This action cannot be undone.',
+      confirmLabel: 'Delete',
+      cancelLabel: 'Cancel',
+    });
+    if (!confirmed) return;
+
+    try {
+      const API_BASE = import.meta.env.VITE_API_URL ?? 'http://localhost:3001/api';
+      const resp = await fetch(`${API_BASE}/daily-activities/${id}`, {
+        method: 'DELETE',
+      });
+
+      if (!resp.ok) {
+        const body = await resp.json().catch(() => ({}));
+        throw new Error(body.error || 'Failed to delete activity');
+      }
+
+      showToast('Activity deleted successfully', 'success');
+      fetchActivities({ date: activitiesDateFilter, allDays: showAllDays });
+    } catch (e) {
+      showToast(e?.message || 'Failed to delete activity', 'error');
     }
   }
 
@@ -429,21 +471,41 @@ export default function Profile({ currentUser }) {
                     <div className="daily-activity-day">{g.date}</div>
                     {g.items.map((it) => (
                       <div className="daily-activity-item" key={it.id}>
-                        <div className="daily-activity-item-top">
-                          <div style={{ fontWeight: 800, color: 'var(--navy)' }}>Daily Activity</div>
-                          <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
-                            <span className="daily-activity-pill gray">ID: {it.id}</span>
-                            {it.activity_category ? (
-                              <span className="daily-activity-pill amber">{it.activity_category}</span>
-                            ) : (
-                              <span className="daily-activity-pill gray">No Category</span>
-                            )}
-                            {it.status ? (
-                              <span className="daily-activity-pill green">{it.status}</span>
-                            ) : (
-                              <span className="daily-activity-pill gray">No Status</span>
-                            )}
+                        <div className="daily-activity-item-top" style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
+                          <div style={{ display: 'flex', alignItems: 'center', gap: 12 }}>
+                            <div style={{ fontWeight: 800, color: 'var(--navy)' }}>Daily Activity</div>
+                            <div style={{ display: 'flex', gap: 8, flexWrap: 'wrap' }}>
+                              <span className="daily-activity-pill gray">ID: {it.id}</span>
+                              {it.activity_category ? (
+                                <span className="daily-activity-pill amber">{it.activity_category}</span>
+                              ) : (
+                                <span className="daily-activity-pill gray">No Category</span>
+                              )}
+                              {it.status ? (
+                                <span className="daily-activity-pill green">{it.status}</span>
+                              ) : (
+                                <span className="daily-activity-pill gray">No Status</span>
+                              )}
+                            </div>
                           </div>
+                          <button
+                            onClick={() => handleDeleteActivity(it.id)}
+                            style={{
+                              background: 'none',
+                              border: 'none',
+                              color: 'var(--red)',
+                              cursor: 'pointer',
+                              padding: '4px 8px',
+                              fontSize: '12px',
+                              display: 'inline-flex',
+                              alignItems: 'center',
+                              gap: '4px',
+                              fontWeight: '600'
+                            }}
+                            title="Delete this activity"
+                          >
+                            <i className="fas fa-trash-alt" /> Erase
+                          </button>
                         </div>
                         <div className="daily-activity-text">{it.activity_text}</div>
                       </div>
@@ -455,34 +517,7 @@ export default function Profile({ currentUser }) {
           </div>
         </div>
 
-        {/* Change Password */}
-        <div className="card" style={{ marginTop: 18 }}>
-          <div className="card-header">
-            <span className="card-title">Change Password</span>
-          </div>
-          <div className="card-body">
-            <div className="form-grid">
-              <div className="form-group">
-                <label className="form-label">Current Password</label>
-                <input type="password" className="form-control" placeholder="••••••••" />
-              </div>
-              <div className="form-group">
-                <label className="form-label">New Password</label>
-                <input type="password" className="form-control" placeholder="••••••••" />
-              </div>
-              <div className="form-group">
-                <label className="form-label">Confirm Password</label>
-                <input type="password" className="form-control" placeholder="••••••••" />
-              </div>
-            </div>
 
-            <div style={{ marginTop: 14, display: 'flex', justifyContent: 'flex-start' }}>
-              <button className="btn btn-primary" onClick={() => showToast('Password updated successfully', 'success')}>
-                <i className="fas fa-save" /> Update Password
-              </button>
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Toast */}

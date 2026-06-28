@@ -110,10 +110,10 @@ const COL_WIDTHS = {
   'DATE': 90,
   'REASON': 200,
   'COMPLAINER DETAILS': 160,
-  'REGISTERED CCU FILE NO': 130,
+  'REGISTERED CCU FILE NO': 140,
   'REMARKS': 200,
   'STATUS': 90,
-  'ACTIONS': 90,
+  'ACTIONS': 110,
 };
 
 function pad2(value) {
@@ -1203,7 +1203,7 @@ export default function CFiles() {
   }, [cfiles]);
 
   return (
-    <div style={{ padding: 24, fontFamily: "'DM Sans', sans-serif", background: theme.bg, minHeight: '100vh' }}>
+    <div style={{ padding: 24, fontFamily: "'Inter', sans-serif", background: theme.bg, minHeight: '100vh' }}>
       {/* Breadcrumb */}
       <div style={{ fontSize: 12, color: '#999', marginBottom: 16 }}>
         <span>Home</span> / <span>Complaint Management</span>
@@ -1371,19 +1371,14 @@ export default function CFiles() {
 
         {/* Table */}
         <div style={{ overflowX: 'auto' }}>
-          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12 }}>
+          <table style={{ width: '100%', borderCollapse: 'collapse', fontSize: 12, tableLayout: 'fixed' }}>
             <thead>
               <tr>
-                <th style={{ textAlign: 'left', padding: '9px 12px', fontSize: 11, fontWeight: 600, color: theme.text3, textTransform: 'uppercase', letterSpacing: '.7px', background: '#f8fafc', borderBottom: `1px solid ${theme.border}`, whiteSpace: 'nowrap' }}>FILE NO</th>
-                <th style={{ textAlign: 'left', padding: '9px 12px', fontSize: 11, fontWeight: 600, color: theme.text3, textTransform: 'uppercase', letterSpacing: '.7px', background: '#f8fafc', borderBottom: `1px solid ${theme.border}`, whiteSpace: 'nowrap' }}>NAME OF THE APARTMENT</th>
-                <th style={{ textAlign: 'left', padding: '9px 12px', fontSize: 11, fontWeight: 600, color: theme.text3, textTransform: 'uppercase', letterSpacing: '.7px', background: '#f8fafc', borderBottom: `1px solid ${theme.border}`, whiteSpace: 'nowrap' }}>ADDRESS</th>
-                <th style={{ textAlign: 'left', padding: '9px 12px', fontSize: 11, fontWeight: 600, color: theme.text3, textTransform: 'uppercase', letterSpacing: '.7px', background: '#f8fafc', borderBottom: `1px solid ${theme.border}`, whiteSpace: 'nowrap' }}>DATE</th>
-                <th style={{ textAlign: 'left', padding: '9px 12px', fontSize: 11, fontWeight: 600, color: theme.text3, textTransform: 'uppercase', letterSpacing: '.7px', background: '#f8fafc', borderBottom: `1px solid ${theme.border}`, whiteSpace: 'nowrap' }}>REASON</th>
-                <th style={{ textAlign: 'left', padding: '9px 12px', fontSize: 11, fontWeight: 600, color: theme.text3, textTransform: 'uppercase', letterSpacing: '.7px', background: '#f8fafc', borderBottom: `1px solid ${theme.border}`, whiteSpace: 'nowrap' }}>COMPLAINER DETAILS</th>
-                <th style={{ textAlign: 'left', padding: '9px 12px', fontSize: 11, fontWeight: 600, color: theme.text3, textTransform: 'uppercase', letterSpacing: '.7px', background: '#f8fafc', borderBottom: `1px solid ${theme.border}`, whiteSpace: 'nowrap' }}>REGISTERED CCU FILE NO</th>
-                <th style={{ textAlign: 'left', padding: '9px 12px', fontSize: 11, fontWeight: 600, color: theme.text3, textTransform: 'uppercase', letterSpacing: '.7px', background: '#f8fafc', borderBottom: `1px solid ${theme.border}`, whiteSpace: 'nowrap' }}>REMARKS</th>
-                <th style={{ textAlign: 'left', padding: '9px 12px', fontSize: 11, fontWeight: 600, color: theme.text3, textTransform: 'uppercase', letterSpacing: '.7px', background: '#f8fafc', borderBottom: `1px solid ${theme.border}`, whiteSpace: 'nowrap' }}>STATUS</th>
-                <th style={{ textAlign: 'center', padding: '9px 12px', fontSize: 11, fontWeight: 600, color: theme.text3, textTransform: 'uppercase', letterSpacing: '.7px', background: '#f8fafc', borderBottom: `1px solid ${theme.border}`, whiteSpace: 'nowrap' }}>ACTIONS</th>
+                {Object.keys(COL_WIDTHS).map((label) => (
+                  <th key={label} style={label === 'ACTIONS' ? { ...thStyle, textAlign: 'center', width: COL_WIDTHS[label] } : { ...thStyle, width: COL_WIDTHS[label] }}>
+                    {label}
+                  </th>
+                ))}
               </tr>
             </thead>
             <tbody>
@@ -1396,19 +1391,24 @@ export default function CFiles() {
                   const days = calculateDaysElapsed(cf.date);
                   const isPending = days > 15;
                   return (
-                    <tr key={cf.id} style={{ 
-                      borderBottom: `1px solid ${theme.border}`,
-                      background: isPending ? '#fffbeb' : 'transparent',
-                    }}>
-                      <td style={{ padding: '10px 12px', color: isPending ? theme.orange : theme.text }}>{cf.file_no}</td>
-                      <td style={{ padding: '10px 12px', maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis' }}>{cf.name_of_apartment || '—'}</td>
-                      <td style={{ padding: '10px 12px', maxWidth: 220, overflow: 'hidden', textOverflow: 'ellipsis' }}>{cf.address || '—'}</td>
-                      <td style={{ padding: '10px 12px', whiteSpace: 'nowrap' }}>{formatDisplayDate(cf.date)}</td>
-                      <td style={{ padding: '10px 12px', maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis' }}>{cf.reason || '—'}</td>
-                      <td style={{ padding: '10px 12px', maxWidth: 200, overflow: 'hidden', textOverflow: 'ellipsis' }}>{cf.complainer_details || '—'}</td>
-                      <td style={{ padding: '10px 12px', maxWidth: 160, overflow: 'hidden', textOverflow: 'ellipsis' }}>{cf.registered_ccu_file_no || '—'}</td>
-                      <td style={{ padding: '10px 12px', maxWidth: 240, overflow: 'hidden', textOverflow: 'ellipsis' }}>{cf.remarks || '—'}</td>
-                      <td style={{ padding: '10px 12px' }}>
+                    <tr
+                      key={cf.id}
+                      style={{ 
+                        borderBottom: `1px solid ${theme.border}`,
+                        background: isPending ? '#fffbeb' : 'transparent',
+                      }}
+                      onMouseEnter={(e) => (e.currentTarget.style.background = isPending ? '#fef3c7' : '#f8fafc')}
+                      onMouseLeave={(e) => (e.currentTarget.style.background = isPending ? '#fffbeb' : '')}
+                    >
+                      <td style={{ ...cellStyle, color: isPending ? theme.orange : theme.text, fontWeight: 500 }} title={cf.file_no}>{cf.file_no}</td>
+                      <td style={cellStyle} title={cf.name_of_apartment}>{cf.name_of_apartment || '—'}</td>
+                      <td style={cellStyle} title={cf.address}>{cf.address || '—'}</td>
+                      <td style={cellStyle} title={formatDisplayDate(cf.date)}>{formatDisplayDate(cf.date)}</td>
+                      <td style={cellStyle} title={cf.reason}>{cf.reason || '—'}</td>
+                      <td style={cellStyle} title={cf.complainer_details}>{cf.complainer_details || '—'}</td>
+                      <td style={cellStyle} title={cf.registered_ccu_file_no}>{cf.registered_ccu_file_no || '—'}</td>
+                      <td style={cellStyle} title={cf.remarks}>{cf.remarks || '—'}</td>
+                      <td style={{ ...cellStyle, overflow: 'visible' }}>
                         <span style={{
                           display: 'inline-block',
                           padding: '3px 9px',
@@ -1421,7 +1421,7 @@ export default function CFiles() {
                           {cf.status}
                         </span>
                       </td>
-                      <td style={{ padding: '10px 12px', textAlign: 'center' }}>
+                      <td style={{ ...cellStyle, textAlign: 'center', overflow: 'visible' }}>
                         <div style={{ display: 'flex', gap: 6, justifyContent: 'center' }}>
                           <button onClick={() => { setSelectedRecord(cf); setShowViewModal(true); }}
                             style={{ background: 'none', border: 'none', color: theme.blue, cursor: 'pointer', fontSize: 14, padding: 4 }} title="View">
